@@ -102,7 +102,7 @@ int main()
                 else
                 {
                     printf("\nIngrese el titulo a buscar (Secuencial): ");
-                    fflush(stdin); // Limpieza de buffer
+                    fflush(stdin); 
                     scanf(" %99[^\n]", tituloBuscado);
 
                     pos = buscarLibroPorTituloSecuencial(vectorLibros, cantidad, tituloBuscado);
@@ -132,9 +132,6 @@ int main()
     return 0;
 }
 
-/* ======================= IMPLEMENTACION DE FUNCIONES ======================= */
-
-// Inicializa la estructura del grafo, la matriz de adyacencia y el array de libros.
 void IniciarGrafo(tGrafoAdyacencia ** ppgrafo)
 {
     int i, j;
@@ -145,7 +142,7 @@ void IniciarGrafo(tGrafoAdyacencia ** ppgrafo)
         exit(EXIT_FAILURE);
     }
 
-    // Inicializa la matriz de adyacencia a 0 (sin arcos)
+
     for (i = 0; i < MAX_LIBROS; i++)
     {
         for (j = 0; j < MAX_LIBROS; j++)
@@ -154,14 +151,14 @@ void IniciarGrafo(tGrafoAdyacencia ** ppgrafo)
         }
     }
 
-    // Inicializa el array de punteros a libros a NULL
+
     for (i = 0; i < MAX_LIBROS; i++)
     {
         (*ppgrafo)->libros[i] = NULL;
     }
 }
 
-// Muestra la lista de libros y sus recomendaciones (arcos)
+
 void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
 {
     int i, j;
@@ -182,7 +179,7 @@ void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
             printf("\n--- LIBRO ID %d: %s ---\n", libro_origen->id, libro_origen->titulo);
             printf("Autor: %s, Genero: %s\n", libro_origen->autor, libro_origen->genero);
 
-            // Mostrar libro pariente si existe
+            
             if (libro_origen->pariente != -1 &&
                 libro_origen->pariente >= 0 &&
                 libro_origen->pariente < MAX_LIBROS)
@@ -192,7 +189,7 @@ void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
                     printf("RELACION DIRECTA (Pariente): %s\n", par->titulo);
             }
 
-            // Mostrar arcos de recomendación
+            
             printf("RECOMENDACIONES (Arcos):\n");
             for(j = 0; j < MAX_LIBROS; j++)
             {
@@ -208,7 +205,6 @@ void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
     printf("\n============================================\n");
 }
 
-// Crea un nuevo libro (nodo) y lo añade al grafo, creando el arco con su pariente.
 void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
                 const char *nuevo_titulo, const char *nuevo_autor, const char *nuevo_genero)
 {
@@ -231,7 +227,7 @@ void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
 
     (*ppgrafo)->libros[nuevo_id] = aux;
 
-    // Crea arcos bidireccionales si el pariente es válido
+    
     if (pariente >= 0 && pariente < MAX_LIBROS)
     {
         (*ppgrafo)->matriz_arco[nuevo_id][pariente] = 1;
@@ -239,9 +235,6 @@ void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
     }
 }
 
-/* ================== TEMA 3 - RECURSIVIDAD (DFS) ================== */
-
-// Función de inicio para el recorrido DFS, inicializa el vector de visitados.
 void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio)
 {
     int visitados[MAX_LIBROS];
@@ -253,7 +246,6 @@ void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio)
         return;
     }
 
-    // Inicializar vector de visitados a 0 (no visitado)
     for (i = 0; i < MAX_LIBROS; i++)
         visitados[i] = 0;
 
@@ -263,17 +255,17 @@ void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio)
     DFSRecomendaciones(grafo, idInicio, visitados);
 }
 
-// Implementación recursiva del recorrido en profundidad (DFS)
+
 void DFSRecomendaciones(tGrafoAdyacencia * grafo, int idActual, int visitados[])
 {
     int j;
     tlibro * actual;
 
-    // Caso base: si ya fue visitado
+
     if (visitados[idActual])
         return;
 
-    visitados[idActual] = 1;  // Marcar como visitado
+    visitados[idActual] = 1;  
 
     actual = grafo->libros[idActual];
     if (actual == NULL)
@@ -281,21 +273,17 @@ void DFSRecomendaciones(tGrafoAdyacencia * grafo, int idActual, int visitados[])
 
     printf("  Visitando: %s (ID %d)\n", actual->titulo, actual->id);
 
-    // Llamadas recursivas a todos los vecinos no visitados
     for (j = 0; j < MAX_LIBROS; j++)
     {
-        if (grafo->matriz_arco[idActual][j] == 1 && // Hay arco
-            !visitados[j] &&                       // No visitado
-            grafo->libros[j] != NULL)              // Existe el nodo destino
+        if (grafo->matriz_arco[idActual][j] == 1 && o
+            !visitados[j] &&                       
+            grafo->libros[j] != NULL)              
         {
             DFSRecomendaciones(grafo, j, visitados);
         }
     }
 }
 
-/* ================== TEMA 6 - ORDENAMIENTO (SELECCIÓN DIRECTA) ================== */
-
-// Carga los punteros de los libros existentes en el grafo a un vector auxiliar.
 int cargarVectorLibros(tGrafoAdyacencia * grafo, tlibro * v[])
 {
     int i, k = 0;
@@ -308,10 +296,9 @@ int cargarVectorLibros(tGrafoAdyacencia * grafo, tlibro * v[])
             k++;
         }
     }
-    return k; // Cantidad de libros cargados
+    return k; 
 }
 
-// Ordena el vector de libros alfabéticamente por título (usando Selección Directa).
 void ordenarLibrosPorTitulo(tlibro * v[], int n)
 {
     int i, j, posMin;
@@ -340,7 +327,7 @@ void ordenarLibrosPorTitulo(tlibro * v[], int n)
     }
 }
 
-// Muestra los libros contenidos en el vector ya ordenado.
+
 void mostrarLibrosOrdenados(tlibro * v[], int n)
 {
     int i;
@@ -356,10 +343,6 @@ void mostrarLibrosOrdenados(tlibro * v[], int n)
     }
 }
 
-/* ================== TEMA 7 - BUSQUEDA (SECUENCIAL) ================== */
-
-// Busca un libro por título en el vector de libros usando Búsqueda Secuencial.
-// Devuelve la posición en el vector (0..n-1) o -1 si no se encuentra.
 int buscarLibroPorTituloSecuencial(tlibro * v[], int n, const char * titulo)
 {
     int i;
@@ -376,7 +359,6 @@ int buscarLibroPorTituloSecuencial(tlibro * v[], int n, const char * titulo)
     return -1; // No encontrado
 }
 
-// Función auxiliar para mostrar los datos de un libro (actualmente no usada en main)
 void MostrarLibroCargado(tlibro * lib)
 {
     if (lib == NULL)
@@ -390,3 +372,4 @@ void MostrarLibroCargado(tlibro * lib)
     printf(" Genero   : %s\n", lib->genero);
 
 }
+
