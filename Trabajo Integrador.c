@@ -2,54 +2,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LIBROS 10 // Define el límite máximo de libros/nodos del catálogo
+#define MAX_LIBROS 10 // Define el lÃ­mite mÃ¡ximo de libros/nodos del catÃ¡logo
 
 // Estructura que representa un libro (nodo del grafo)
 typedef struct {
-    int id;           // Identificador único del libro (índice en el array/matriz)
-    int pariente;     // ID del libro con el que tiene una relación directa (para arcos)
-    char titulo[100]; // Título del libro
-    char autor[100];  // Autor del libro
-    char genero[50];  // Género literario
+    int id;           
+    char titulo[100]; 
+    char autor[100];  
+    char genero[50];  
 } tlibro;
 
 // Estructura que representa el Grafo de Adyacencia para las recomendaciones
 typedef struct {
-    int matriz_arco[MAX_LIBROS][MAX_LIBROS]; // Matriz de adyacencia (1 si hay recomendación/arco)
-    tlibro * libros[MAX_LIBROS];             // Array de punteros a los libros (nodos)
+    int matriz_arco[MAX_LIBROS][MAX_LIBROS]; 
+    tlibro * libros[MAX_LIBROS];             
 } tGrafoAdyacencia;
 
-// Declaración global del grafo de recomendaciones
+// DeclaraciÃ³n global del grafo de recomendaciones
 tGrafoAdyacencia * grafo_recomendaciones;
 
 /* ======================= PROTOTIPOS DE FUNCIONES ======================= */
 
-// Inicializa la estructura del grafo, la matriz de adyacencia y el array de libros.
 void IniciarGrafo(tGrafoAdyacencia **);
-// Muestra la lista de libros y sus recomendaciones (arcos)
 void MostrarGrafo(tGrafoAdyacencia **);
-// Crea un nuevo libro (nodo) y lo añade al grafo, creando el arco con su pariente.
 void CrearLibro(tGrafoAdyacencia **, int, int, const char *, const char *, const char *);
-
-/* Tema 3 - Recursividad sobre el grafo (DFS) */
-// Función de inicio para el recorrido DFS, inicializa el vector de visitados.
 void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio);
-// Implementación recursiva del recorrido en profundidad (DFS)
 void DFSRecomendaciones(tGrafoAdyacencia * grafo, int idActual, int visitados[]);
-
-/* Tema 6 - Ordenamiento (Selección Directa) */
-// Carga los punteros de los libros existentes en el grafo a un vector auxiliar.
 int cargarVectorLibros(tGrafoAdyacencia * grafo, tlibro * v[]);
-// Ordena el vector de libros alfabéticamente por título (usando Selección Directa).
 void ordenarLibrosPorTitulo(tlibro * v[], int n);
-// Muestra los libros contenidos en el vector ordenado.
 void mostrarLibrosOrdenados(tlibro * v[], int n);
-
-/* Tema 7 - Busqueda (Secuencial) */
-// Busca un libro por título en el vector de libros usando Búsqueda Secuencial.
 int buscarLibroPorTituloSecuencial(tlibro * v[], int n, const char * titulo);
-
-// Función auxiliar para mostrar los datos de un libro (actualmente no usada en main)
 void MostrarLibroCargado(tlibro * lib);
 
 /* =========================== FUNCION PRINCIPAL =========================== */
@@ -72,11 +54,7 @@ int main()
     CrearLibro(&grafo_recomendaciones, 2, 1, "Trono de Cristal", "Sarah J. Maas", "Fantasia Epica");
     CrearLibro(&grafo_recomendaciones, 3, 4, "Dune", "Frank Herbert", "Ciencia Ficcion");
     CrearLibro(&grafo_recomendaciones, 4, 3, "Fundacion", "Isaac Asimov", "Ciencia Ficcion");
-    CrearLibro(&grafo_recomendaciones, 5, 4, "Neuromante", "William Gibson", "Ciberpunk");
-    CrearLibro(&grafo_recomendaciones, 6, -1, "Cien Anios de Soledad", "Gabriel Garcia Marquez", "Realismo Magico");
-    CrearLibro(&grafo_recomendaciones, 7, 6, "El Amor en Tiempos de Colera", "Gabriel Garcia Marquez", "Realismo Magico");
-    CrearLibro(&grafo_recomendaciones, 8, 9, "La Chica del Tren", "Paula Hawkins", "Suspenso");
-    CrearLibro(&grafo_recomendaciones, 9, 8, "Perdida", "Gillian Flynn", "Suspenso Psicologico");
+
 
     /* MENU PRINCIPAL */
     do
@@ -214,7 +192,7 @@ void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
                     printf("RELACION DIRECTA (Pariente): %s\n", par->titulo);
             }
 
-            // Mostrar arcos de recomendación
+            // Mostrar arcos de recomendaciÃ³n
             printf("RECOMENDACIONES (Arcos):\n");
             for(j = 0; j < MAX_LIBROS; j++)
             {
@@ -230,7 +208,7 @@ void MostrarGrafo(tGrafoAdyacencia ** ppgrafo)
     printf("\n============================================\n");
 }
 
-// Crea un nuevo libro (nodo) y lo añade al grafo, creando el arco con su pariente.
+// Crea un nuevo libro (nodo) y lo aÃ±ade al grafo, creando el arco con su pariente.
 void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
                 const char *nuevo_titulo, const char *nuevo_autor, const char *nuevo_genero)
 {
@@ -253,7 +231,7 @@ void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
 
     (*ppgrafo)->libros[nuevo_id] = aux;
 
-    // Crea arcos bidireccionales si el pariente es válido
+    // Crea arcos bidireccionales si el pariente es vÃ¡lido
     if (pariente >= 0 && pariente < MAX_LIBROS)
     {
         (*ppgrafo)->matriz_arco[nuevo_id][pariente] = 1;
@@ -263,7 +241,7 @@ void CrearLibro(tGrafoAdyacencia ** ppgrafo, int nuevo_id, int pariente,
 
 /* ================== TEMA 3 - RECURSIVIDAD (DFS) ================== */
 
-// Función de inicio para el recorrido DFS, inicializa el vector de visitados.
+// FunciÃ³n de inicio para el recorrido DFS, inicializa el vector de visitados.
 void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio)
 {
     int visitados[MAX_LIBROS];
@@ -285,7 +263,7 @@ void recorrerRecomendacionesDesde(tGrafoAdyacencia * grafo, int idInicio)
     DFSRecomendaciones(grafo, idInicio, visitados);
 }
 
-// Implementación recursiva del recorrido en profundidad (DFS)
+// ImplementaciÃ³n recursiva del recorrido en profundidad (DFS)
 void DFSRecomendaciones(tGrafoAdyacencia * grafo, int idActual, int visitados[])
 {
     int j;
@@ -315,7 +293,7 @@ void DFSRecomendaciones(tGrafoAdyacencia * grafo, int idActual, int visitados[])
     }
 }
 
-/* ================== TEMA 6 - ORDENAMIENTO (SELECCIÓN DIRECTA) ================== */
+/* ================== TEMA 6 - ORDENAMIENTO (SELECCIÃ“N DIRECTA) ================== */
 
 // Carga los punteros de los libros existentes en el grafo a un vector auxiliar.
 int cargarVectorLibros(tGrafoAdyacencia * grafo, tlibro * v[])
@@ -333,7 +311,7 @@ int cargarVectorLibros(tGrafoAdyacencia * grafo, tlibro * v[])
     return k; // Cantidad de libros cargados
 }
 
-// Ordena el vector de libros alfabéticamente por título (usando Selección Directa).
+// Ordena el vector de libros alfabÃ©ticamente por tÃ­tulo (usando SelecciÃ³n Directa).
 void ordenarLibrosPorTitulo(tlibro * v[], int n)
 {
     int i, j, posMin;
@@ -345,14 +323,14 @@ void ordenarLibrosPorTitulo(tlibro * v[], int n)
 
         for (j = i + 1; j < n; j++)
         {
-            // Compara títulos. Si v[j] es alfabéticamente menor, actualiza posMin.
+            // Compara tÃ­tulos. Si v[j] es alfabÃ©ticamente menor, actualiza posMin.
             if (strcmp(v[j]->titulo, v[posMin]->titulo) < 0)
             {
                 posMin = j;
             }
         }
 
-        // Intercambio si se encuentra un título alfabéticamente menor
+        // Intercambio si se encuentra un tÃ­tulo alfabÃ©ticamente menor
         if (posMin != i)
         {
             aux = v[i];
@@ -380,25 +358,25 @@ void mostrarLibrosOrdenados(tlibro * v[], int n)
 
 /* ================== TEMA 7 - BUSQUEDA (SECUENCIAL) ================== */
 
-// Busca un libro por título en el vector de libros usando Búsqueda Secuencial.
-// Devuelve la posición en el vector (0..n-1) o -1 si no se encuentra.
+// Busca un libro por tÃ­tulo en el vector de libros usando BÃºsqueda Secuencial.
+// Devuelve la posiciÃ³n en el vector (0..n-1) o -1 si no se encuentra.
 int buscarLibroPorTituloSecuencial(tlibro * v[], int n, const char * titulo)
 {
     int i;
 
     for (i = 0; i < n; i++)
     {
-        // Compara el título
+        // Compara el tÃ­tulo
         if (strcmp(v[i]->titulo, titulo) == 0)
         {
-            return i; // Encontrado, devuelve la posición
+            return i; // Encontrado, devuelve la posiciÃ³n
         }
     }
 
     return -1; // No encontrado
 }
 
-// Función auxiliar para mostrar los datos de un libro (actualmente no usada en main)
+// FunciÃ³n auxiliar para mostrar los datos de un libro (actualmente no usada en main)
 void MostrarLibroCargado(tlibro * lib)
 {
     if (lib == NULL)
@@ -410,4 +388,5 @@ void MostrarLibroCargado(tlibro * lib)
     printf(" Titulo   : %s\n", lib->titulo);
     printf(" Autor    : %s\n", lib->autor);
     printf(" Genero   : %s\n", lib->genero);
+
 }
